@@ -8,6 +8,7 @@ class Database:
 
     def __init__(self):
         self.guilds = {}
+        self.users = {}
 
     async def setup(self):
         self.pool = await create_pool(
@@ -57,4 +58,12 @@ class Database:
 
         data = await self.fetchrow("SELECT * FROM Guilds WHERE id = $1;", id)
         self.guilds[id] = data
+        return data
+
+    async def fetch_user(self, id: int):
+        if id in self.users:
+            return self.users[id]
+
+        data = await self.fetchrow("SELECT * FROM Users WHERE id = $1;", id)
+        self.users[id] = data
         return data
