@@ -2,7 +2,7 @@ from discord.ext.commands import check, Context
 
 def not_banned():
     async def predicate(ctx: Context):
-        user = await ctx.bot.db.fetch_user(ctx.author.id)
+        user = await ctx.bot.db.user_is_banned(ctx.author.id)
         if user and user["banned"]:
             return False
 

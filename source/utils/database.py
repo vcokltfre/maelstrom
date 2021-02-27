@@ -9,6 +9,7 @@ class Database:
     def __init__(self):
         self.guilds = {}
         self.users = {}
+        self.banned = set()
 
     async def setup(self):
         self.pool = await create_pool(
@@ -82,3 +83,15 @@ class Database:
 
     async def get_rank(self, id: int, guild_id: int):
         return await self.fetchrow("SELECT rank FROM (SELECT id, RANK () OVER (ORDER BY xp) FROM Users WHERE guildid = $1) as ranks WHERE id = $2;", guild_id, id)
+
+    async def user_is_banned(self, id: int) -> bool:
+        if id in self.banned:
+            return True
+        users = await self.fetch("SELECT * FROM Users WHERE id = $1;", id)
+
+        for user in users:
+            if user["banned"]:
+                self.banned.add(id)
+                return True
+
+        return False
