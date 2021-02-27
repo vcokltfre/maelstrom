@@ -7,6 +7,7 @@ from collections import defaultdict
 from json import loads
 
 from source import Bot
+from source.utils.defaults import INCREMENT, MODIFIERS, COOLDOWN, ALGORITHM, LEVELUP
 from helpers.algorithms import Linear, LinearIncremental, Quadratic
 
 algos = {
@@ -158,11 +159,11 @@ class Listener(commands.Cog):
         # Get the guild config
         config = loads(guild["config"]) # TODO: Caching so that we don't load the config every time
         default = config.get("default", 100)
-        levelinc = config.get("increment", 300)
-        modifiers = config.get("modifiers", {})
-        cooldown = config.get("cooldown", 0)
-        algorithm = algos[config.get("algorithm", "linear")]
-        levelup_config = config.get("levelup", {"method":"react"})
+        levelinc = config.get("increment", INCREMENT)
+        modifiers = config.get("modifiers", MODIFIERS)
+        cooldown = config.get("cooldown", COOLDOWN)
+        algorithm = algos[config.get("algorithm", ALGORITHM)]
+        levelup_config = config.get("levelup", LEVELUP)
 
         # Get the XP modifier, highest role modifier is chosen from roles,
         # highest precendence modifier set overall is chosen,
