@@ -7,6 +7,7 @@ from aiohttp import ClientSession
 
 from .utils.database import Database
 from .utils.context import Context
+from .utils.help import Help
 
 
 class Bot(commands.Bot):
@@ -20,6 +21,7 @@ class Bot(commands.Bot):
             command_prefix=self.get_prefix,
             intents=intents,
             allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
+            help_command=Help(),
             *args,
             **kwargs,
         )
