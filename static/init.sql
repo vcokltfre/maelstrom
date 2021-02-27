@@ -13,3 +13,9 @@ CREATE TABLE IF NOT EXISTS Guilds (
     config          TEXT NOT NULL DEFAULT '{}',
     banned          BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS APIKeys (
+    guildid         BIGINT NOT NULL,
+    token           VARCHAR(64) NOT NULL PRIMARY KEY,
+    permission      VARCHAR(255) NOT NULL DEFAULT 'fetch',
+);
