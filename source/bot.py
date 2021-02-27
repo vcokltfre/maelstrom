@@ -5,6 +5,8 @@ from traceback import print_exc
 
 from aiohttp import ClientSession
 
+from .utils.database import Database
+
 
 class Bot(commands.Bot):
     """A subclass of `commands.Bot` with additional features."""
@@ -21,6 +23,7 @@ class Bot(commands.Bot):
         )
 
         self.session: Optional[ClientSession] = None
+        self.db: Database = Database()
 
     def load_cogs(self, *exts) -> None:
         """Load a set of extensions."""
@@ -36,9 +39,18 @@ class Bot(commands.Bot):
 
         self.session = ClientSession()
 
+        await self.db.setup()
         await super().login(*args, **kwargs)
 
     async def get_prefix(self, message: Message) -> str:
         """Get a dynamic prefix for the bot."""
 
-        return "!"
+        if not message.guild:
+            return "!"
+
+        guild_config = await self.db.fetch_guild(message.guild.id)
+
+        if not guild_config:
+            return "!"
+
+        return guild_config["prefix"]
