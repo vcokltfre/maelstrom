@@ -152,8 +152,8 @@ class Listener(commands.Cog):
 
         # Get the guild config
         config = loads(guild["config"]) # TODO: Caching so that we don't load the config every time
-        default = config.get('default', 100)
-        levelinc = config.get('increment', 300)
+        default = config.get("default", 100)
+        levelinc = config.get("increment", 300)
         modifiers = config.get("modifiers", {})
         cooldown = config.get("cooldown", 0)
         algorithm = algos[config.get("algorithm", "linear")]
