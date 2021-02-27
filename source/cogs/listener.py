@@ -139,7 +139,7 @@ class Listener(commands.Cog):
             return
 
         # Ignore messages starting with the prefix
-        if message.startswith(guild["prefix"]):
+        if message.content.startswith(guild["prefix"]):
             return
 
         # Respond with prefix if the bot is mentioned
