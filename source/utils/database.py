@@ -79,3 +79,6 @@ class Database:
 
     async def fetch_top_users(self, guild_id: int, count: int = 15):
         return await self.fetch("SELECT * FROM Users WHERE guildid = $1 ORDER BY xp DESC LIMIT $2;", guild_id, count)
+
+    async def get_rank(self, id: int, guild_id: int):
+        return await self.fetchrow("SELECT rank FROM (SELECT id, RANK () OVER (ORDER BY xp) FROM Users WHERE guildid = $1) as ranks WHERE id = $2;", guild_id, id)
