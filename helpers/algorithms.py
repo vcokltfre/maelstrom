@@ -1,4 +1,5 @@
 from typing import Tuple
+from math import sqrt
 
 
 class Algorithm:
@@ -35,3 +36,15 @@ class LinearIncremental(Algorithm):
             level += 1
 
         return level, abs(sub - xp)
+
+
+class Quadratic(Algorithm):
+    """A ^0.5 based levelling algorithm."""
+
+    @staticmethod
+    def get_level(xp: int, thr: int) -> tuple:
+        level = int((1 + sqrt(1 + 8* (xp / thr))) / 2)
+
+        x = ((level + 1)**2 * thr - (level + 1)*thr) * 0.5
+
+        return level, int(x - xp)
