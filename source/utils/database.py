@@ -75,3 +75,6 @@ class Database:
         data = await self.fetchrow("SELECT * FROM Users WHERE id = $1;", id)
         self.users[id] = data
         return data
+
+    async def fetch_top_users(self, guild_id: int, count: int = 15):
+        return await self.fetch("SELECT * FROM Users WHERE guildid = $1 ORDER BY xp DESC LIMIT $2;", guild_id, count)

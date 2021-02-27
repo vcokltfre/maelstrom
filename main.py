@@ -12,6 +12,7 @@ if __name__ == "__main__":
         "jishaku",
         "source.cogs.utility",
         "source.cogs.listener",
+        "source.cogs.commands",
     )
 
     bot.run(getenv("TOKEN"))
