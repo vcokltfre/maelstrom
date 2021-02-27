@@ -60,6 +60,14 @@ class Database:
         self.guilds[id] = data
         return data
 
+    async def create_user(self, id: int, guild_id: int, xp: int = 0):
+        await self.execute("INSERT INTO Users (id, guildid, xp) VALUES ($1, $2, $3);", id, guild_id, xp)
+
+    async def add_xp(self, id: int, guild_id: int, xp: int = 0):
+        await self.execute("UPDATE Users SET xp = xp + $3 WHERE id = $1 AND guildid = $2;", id, guild_id, xp)
+        if id in self.users:
+            del self.users[id]
+
     async def fetch_user(self, id: int):
         if id in self.users:
             return self.users[id]
