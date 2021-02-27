@@ -88,7 +88,7 @@ class Listener(commands.Cog):
         current_xp = self.cache.get(message.author.id)
         should_create = False
         if current_xp is None:
-            user = await self.bot.db.fetch_user(message.author.id)
+            user = await self.bot.db.fetch_user(message.author.id, message.guild.id)
             if not user:
                 current_xp = 0
                 should_create = True
