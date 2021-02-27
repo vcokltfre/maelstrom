@@ -68,12 +68,13 @@ class Database:
         if id in self.users:
             del self.users[id]
 
-    async def fetch_user(self, id: int):
-        if id in self.users:
-            return self.users[id]
+    async def fetch_user(self, id: int, guild_id: int):
+        bucket = f"{id}/{guild_id}"
+        if bucket in self.users:
+            return self.users[bucket]
 
-        data = await self.fetchrow("SELECT * FROM Users WHERE id = $1;", id)
-        self.users[id] = data
+        data = await self.fetchrow("SELECT * FROM Users WHERE id = $1 AND guildid = $2;", id, guild_id)
+        self.users[bucket] = data
         return data
 
     async def fetch_top_users(self, guild_id: int, count: int = 15):
