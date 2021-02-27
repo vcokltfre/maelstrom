@@ -129,6 +129,11 @@ class Listener(commands.Cog):
         if not message.guild:
             return
 
+        # Ignore bots
+        if message.author.bot:
+            return
+
+        # Try to wait until we've filled the cache, might need to remove if in lots of guilds
         await self.bot.wait_until_ready()
 
         guild_id = message.guild.id
