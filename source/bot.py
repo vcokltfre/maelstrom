@@ -6,6 +6,7 @@ from traceback import print_exc
 from aiohttp import ClientSession
 
 from .utils.database import Database
+from .utils.context import Context
 
 
 class Bot(commands.Bot):
@@ -55,3 +56,6 @@ class Bot(commands.Bot):
             return "!"
 
         return guild_config["prefix"]
+
+    async def get_context(self, message: Message):
+        return await super().get_context(message, cls=Context)
