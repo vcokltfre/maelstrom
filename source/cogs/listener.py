@@ -138,6 +138,10 @@ class Listener(commands.Cog):
         if not guild:
             return
 
+        # Ignore messages starting with the prefix
+        if message.startswith(guild["prefix"]):
+            return
+
         # Respond with prefix if the bot is mentioned
         try:
             if self.pattern.search(message.content):
