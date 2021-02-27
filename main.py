@@ -10,6 +10,7 @@ if __name__ == "__main__":
 
     bot.load_cogs(
         "jishaku",
+        "source.cogs.utility",
     )
 
     bot.run(getenv("TOKEN"))
