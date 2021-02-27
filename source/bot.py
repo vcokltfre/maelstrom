@@ -18,7 +18,7 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=self.get_prefix,
             intents=intents,
-            allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False)
+            allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
             *args,
             **kwargs,
         )
