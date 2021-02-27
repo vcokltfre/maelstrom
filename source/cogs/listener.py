@@ -102,7 +102,7 @@ class Listener(commands.Cog):
         if should_create:
             await self.bot.db.create_user(message.author.id, message.guild.id, new)
         else:
-            await self.bot.db.add_xp(message.author.id, message.guild.id, new)
+            await self.bot.db.add_xp(message.author.id, message.guild.id, to_add)
 
         return current_xp, new
 
