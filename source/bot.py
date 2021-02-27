@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Intents, Message
+from discord import Intents, Message, AllowedMentions
 from typing import Optional
 from traceback import print_exc
 
@@ -18,6 +18,7 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=self.get_prefix,
             intents=intents,
+            allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False)
             *args,
             **kwargs,
         )
