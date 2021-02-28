@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord import Embed
 from typing import Optional
 from asyncio import sleep
 
@@ -29,6 +30,15 @@ class Utility(commands.Cog):
         await self.bot.db.update_guild_prefix(ctx.guild.id, prefix)
 
         await ctx.send(f"Your prefix for this server has been {wording} to: `{prefix}`")
+
+    @commands.command(name="invite")
+    @commands.cooldown(rate=1, per=3, type=commands.BucketType.member)
+    async def invite(self, ctx: commands.Context):
+        await ctx.message.delete()
+        embed = Embed(title="Invite Maelstrom", colour=0x87CEEB)
+        embed.description = "[Invite Me!](https://l.vcokltf.re/maelstrom)"
+        embed.description += "[Join my Support Server!](https://discord.gg/SWZ2bybPcg)"
+        await ctx.author.send(embed=embed)
 
     @commands.command(name="mee6import")
     @commands.is_owner()
