@@ -39,7 +39,7 @@ class Utility(commands.Cog):
         except:
             print("Couldn't delete message")
         embed = Embed(title="Invite Maelstrom", colour=0x87CEEB)
-        embed.description = "[Invite Me!](https://l.vcokltf.re/maelstrom)"
+        embed.description = "[Invite Me!](https://l.vcokltf.re/maelstrom)\n"
         embed.description += "[Join my Support Server!](https://discord.gg/SWZ2bybPcg)"
         await ctx.author.send(embed=embed)
 
