@@ -103,7 +103,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=("src", "github", "git"), invoke_without_command=True)
     @commands.cooldown(rate=1, per=5, type=commands.BucketType.member)
-    @in_guild_or_dm(683009037830324235)#(815301491916144650)
+    @in_guild_or_dm(815301491916144650)
     async def source(self, ctx: Context, *, source_item: SourceConverter = None):
         """Shows the github repo for this bot, include a command, cog, or extension to got to that file."""
         if source_item is None:
