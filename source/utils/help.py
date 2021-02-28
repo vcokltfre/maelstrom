@@ -178,7 +178,7 @@ class Help(HelpCommand):
             embed.add_field(name="Aliases", value=", ".join(group.aliases))
 
         embed.set_footer(
-            text=f"Type {self.clean_prefix}{group.name} "
+            text=f"Type {self.clean_prefix}help {group.name} "
             "<command> to see info on each subcommand"
         )
         await self.context.send(embed=embed)
