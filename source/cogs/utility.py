@@ -1,5 +1,6 @@
 from discord.ext import commands
 from typing import Optional
+from asyncio import sleep
 
 from source import Bot
 from source.utils.checks import not_banned
@@ -26,6 +27,54 @@ class Utility(commands.Cog):
         await self.bot.db.update_guild_prefix(ctx.guild.id, prefix)
 
         await ctx.send(f"Your prefix for this server has been {wording} to: `{prefix}`")
+
+    @commands.command(name="mee6import")
+    @commands.is_owner()
+    async def mee6import(self, ctx: commands.Context, guild: int):
+        """Import a guild using MEE6 into Maelstrom."""
+        await ctx.send(f"Import guild {guild} from MEE6?")
+
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        try:
+            resp = await self.bot.wait_for("message", check=check, timeout=30)
+        except:
+            return
+
+        if resp.content.lower() not in ["yes", "y"]:
+            return
+
+        await ctx.send("Starting import...")
+        await self.bot.db.clear_guild(guild)
+
+        pages = 0
+        user_count = 0
+        userdata = {}
+
+        while True:
+            page = await self.bot.session.get(f"https://mee6.xyz/api/plugins/levels/leaderboard/{guild}?page={pages}")
+            if page.status >= 400: # TODO: figure out how to deal with the ratelimits
+                print(page.status, page.headers)
+                break
+
+            pages += 1
+
+            data = await page.json()
+            users = data["players"]
+
+            for user in users:
+                user_count += 1
+                userdata[user["id"]] = (int(user['id']), guild, user['xp'], 0, False)
+
+            print(f"Page {pages} | Sleeping")
+            await sleep(1)
+
+        await ctx.send(f"Successfully downloaded {pages + 1} pages ({user_count + 1} users) from MEE6 levelling, transferring to db...")
+
+        await self.bot.db.add_users([v for v in userdata.values()])
+
+        await ctx.send("Finished!")
 
 
 def setup(bot: Bot):
