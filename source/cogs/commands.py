@@ -99,7 +99,20 @@ class Commands(commands.Cog):
         """Modify your Maelstrom config."""
         if not ctx.invoked_subcommand:
             await ctx.send_help("config")
-
+    
+    @config.command(name="dm_rank")
+    async def dm_rank(self, ctx: Context, value: str):
+        """Set if you want !rank to dm the user or display in the guild chat"""
+        if not value.lower() in ['true', 'false']:
+            return await ctx.send("Invalid Option! Valid Options: true, false")
+        opt = value.lower()
+        config = await ctx.guild_config()
+        if opt == 'true':
+            config["dm_rank"] = True
+        else:
+            config["dm_rank"] = False
+        await self.bot.db.update_guild_config(ctx.guild.id, config)
+    
     @config.command(name="reset")
     async def cfg_reset(self, ctx: Context):
         """Reset your Maelstrom config."""
