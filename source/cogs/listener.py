@@ -35,6 +35,7 @@ class Listener(commands.Cog):
 
     def get_modifier(self, message: Message, modifiers: dict) -> Union[float, int]:
         """Gets the overall modifier for XP."""
+        modifiers = {int(k): v for k, v in modifiers.items()}
         overall = 1
 
         usermod = modifiers.get(message.author.id)
