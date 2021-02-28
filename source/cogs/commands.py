@@ -136,6 +136,8 @@ class Commands(commands.Cog):
     @cfg_inc.command(name="set")
     async def cfg_inc_set(self, ctx: Context, *, new: int):
         """Set a new level increment."""
+        if not (300 <= new <= 10000):
+            return await ctx.send("Increments must be between 300 and 10,0000 inclusive.")
         config = await ctx.guild_config()
         config["increment"] = new
         await self.bot.db.update_guild_config(ctx.guild.id, config)
