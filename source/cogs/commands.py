@@ -103,7 +103,9 @@ class Commands(commands.Cog):
     @config.command(name="reset")
     async def cfg_reset(self, ctx: Context):
         """Reset your Maelstrom config."""
-        msg = await ctx.send(f"Are you sure you wish to reset your Maelstrom config? [Yes/No]")
+        msg = await ctx.send(
+            f"Are you sure you wish to reset your Maelstrom config? [Yes/No]"
+        )
 
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
@@ -137,7 +139,9 @@ class Commands(commands.Cog):
     async def cfg_inc_set(self, ctx: Context, *, new: int):
         """Set a new level increment."""
         if not (300 <= new <= 10000):
-            return await ctx.send("Increments must be between 300 and 10,0000 inclusive.")
+            return await ctx.send(
+                "Increments must be between 300 and 10,0000 inclusive."
+            )
         config = await ctx.guild_config()
         config["increment"] = new
         await self.bot.db.update_guild_config(ctx.guild.id, config)
@@ -164,7 +168,9 @@ class Commands(commands.Cog):
         mods = config.get("modifiers", {})
 
         if not mods:
-            return await ctx.send(f"You don't have any modifiers overriden. To set one up use `{ctx.prefix}config modifiers add <modifier> <value>`")
+            return await ctx.send(
+                f"You don't have any modifiers overriden. To set one up use `{ctx.prefix}config modifiers add <modifier> <value>`"
+            )
 
         roles, users, channels, categories = "", "", "", ""
         for mod, value in mods.items():
@@ -180,18 +186,29 @@ class Commands(commands.Cog):
                     categories += f"{channel} = {value}\n"
 
         embed = Embed(title="Modifier Overrides", colour=0x87CEEB)
-        if users: embed.add_field(name="Users", value=users)
-        if channels: embed.add_field(name="Channels", value=channels)
-        if roles: embed.add_field(name="Roles", value=roles)
-        if categories: embed.add_field(name="Categories", value=categories)
+        if users:
+            embed.add_field(name="Users", value=users)
+        if channels:
+            embed.add_field(name="Channels", value=channels)
+        if roles:
+            embed.add_field(name="Roles", value=roles)
+        if categories:
+            embed.add_field(name="Categories", value=categories)
 
         await ctx.send(embed=embed)
 
     @cfg_mod.command(name="add", aliases=["set"])
-    async def cfg_mod_add(self, ctx: Context, target: Union[Member, TextChannel, CategoryChannel, Role], override: float):
+    async def cfg_mod_add(
+        self,
+        ctx: Context,
+        target: Union[Member, TextChannel, CategoryChannel, Role],
+        override: float,
+    ):
         """Add a new modifier override."""
         if not (0 <= override <= 5):
-            return await ctx.send("Overrides must be a number between 0 and 5 inclusive. It can have decimals.")
+            return await ctx.send(
+                "Overrides must be a number between 0 and 5 inclusive. It can have decimals."
+            )
         config = await ctx.guild_config()
         mods = config.get("modifiers", {})
 
@@ -199,10 +216,14 @@ class Commands(commands.Cog):
         config["modifiers"] = mods
 
         await self.bot.db.update_guild_config(ctx.guild.id, config)
-        await ctx.send(f"Successfully added `{target.id}` as a {type(target).__name__.lower()} override with value: {override}")
+        await ctx.send(
+            f"Successfully added `{target.id}` as a {type(target).__name__.lower()} override with value: {override}"
+        )
 
     @cfg_mod.command(name="remove", aliases=["del"])
-    async def cfg_mod_del(self, ctx: Context, target: Union[Member, TextChannel, CategoryChannel, Role]):
+    async def cfg_mod_del(
+        self, ctx: Context, target: Union[Member, TextChannel, CategoryChannel, Role]
+    ):
         """Remove an existing modifier override."""
         config = await ctx.guild_config()
         mods = config.get("modifiers", {})
@@ -214,7 +235,9 @@ class Commands(commands.Cog):
         config["modifiers"] = mods
 
         await self.bot.db.update_guild_config(ctx.guild.id, config)
-        await ctx.send(f"Successfully removed `{target.id}` as a {type(target).__name__.lower()} override")
+        await ctx.send(
+            f"Successfully removed `{target.id}` as a {type(target).__name__.lower()} override"
+        )
 
     @config.group(name="cooldown", aliases=["cd"])
     async def cfg_cd(self, ctx: Context):
@@ -226,15 +249,15 @@ class Commands(commands.Cog):
     async def cfg_cd_get(self, ctx: Context):
         """Get the cooldown."""
         config = await ctx.guild_config()
-        await ctx.send(
-            f"Your current cooldown is: {config.get('cooldown', COOLDOWN)}s"
-        )
+        await ctx.send(f"Your current cooldown is: {config.get('cooldown', COOLDOWN)}s")
 
     @cfg_cd.command(name="set")
     async def cfg_cd_set(self, ctx: Context, *, new: int):
         """Set a new cooldown."""
         if not (10 <= new <= 3600):
-            return await ctx.send("Increments must be between 10s and 3,600s inclusive.")
+            return await ctx.send(
+                "Increments must be between 10s and 3,600s inclusive."
+            )
         config = await ctx.guild_config()
         config["cooldown"] = new
         await self.bot.db.update_guild_config(ctx.guild.id, config)
@@ -267,7 +290,9 @@ class Commands(commands.Cog):
         """Set a new algorithm."""
         new = new.lower()
         if not new in algos:
-            return await ctx.send(f"Valid algorithms: {', '.join([k for k in algos.keys()])}")
+            return await ctx.send(
+                f"Valid algorithms: {', '.join([k for k in algos.keys()])}"
+            )
         config = await ctx.guild_config()
         config["algorithm"] = new
         await self.bot.db.update_guild_config(ctx.guild.id, config)
@@ -303,7 +328,7 @@ class Commands(commands.Cog):
         if not new in lus:
             return await ctx.send(f"Valid levelup actions: {', '.join(lus)}")
         config = await ctx.guild_config()
-        config["levelup"] = {"method":new}
+        config["levelup"] = {"method": new}
         await self.bot.db.update_guild_config(ctx.guild.id, config)
         await ctx.send(f"Successfully set your levelup action to: {new}")
 
@@ -313,7 +338,9 @@ class Commands(commands.Cog):
         config = await ctx.guild_config()
         config["levelup"] = LEVELUP
         await self.bot.db.update_guild_config(ctx.guild.id, config)
-        await ctx.send(f"Successfully reset your levelup action to: {LEVELUP['method']}")
+        await ctx.send(
+            f"Successfully reset your levelup action to: {LEVELUP['method']}"
+        )
 
     @config.group(name="roles")
     async def cfg_lr(self, ctx: Context):
@@ -328,7 +355,9 @@ class Commands(commands.Cog):
         config = config.get("roles", ROLES)
 
         if not config:
-            return await ctx.send(f"No level roles have been set up yet, create one using `{ctx.prefix}config roles add <level> <role>`")
+            return await ctx.send(
+                f"No level roles have been set up yet, create one using `{ctx.prefix}config roles add <level> <role>`"
+            )
 
         desc = ""
         for level, role in config.items():
@@ -350,13 +379,17 @@ class Commands(commands.Cog):
         roles = config.get("roles", ROLES)
 
         if len(roles) >= 25:
-            return await ctx.send("For performance reasons, you can't have more than 25 level roles, please remove a level role before adding a new one.")
+            return await ctx.send(
+                "For performance reasons, you can't have more than 25 level roles, please remove a level role before adding a new one."
+            )
 
         roles[str(level)] = role.id
         config["roles"] = roles
 
         await self.bot.db.update_guild_config(ctx.guild.id, config)
-        await ctx.send(f"Successfully added `{role.id}` as the level role for level {level}")
+        await ctx.send(
+            f"Successfully added `{role.id}` as the level role for level {level}"
+        )
 
     @cfg_lr.command(name="remove", aliases=["del"])
     async def cfg_lr_remove(self, ctx: Context, lr: Union[Role, int]):
@@ -383,7 +416,9 @@ class Commands(commands.Cog):
         config["roles"] = roles
 
         await self.bot.db.update_guild_config(ctx.guild.id, config)
-        await ctx.send(f"Successfully removed `{role.id if isinstance(role, Role) else None}` as the level role for level {level}")
+        await ctx.send(
+            f"Successfully removed `{role.id if isinstance(role, Role) else None}` as the level role for level {level}"
+        )
 
 
 def setup(bot: Bot):

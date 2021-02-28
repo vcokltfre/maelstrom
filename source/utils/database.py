@@ -34,7 +34,10 @@ class Database:
 
     async def create_guild(self, id: int, prefix: str = "!", config: dict = {}):
         await self.execute(
-            "INSERT INTO Guilds (id, prefix, config) VALUES ($1, $2, $3);", id, prefix, dumps(config)
+            "INSERT INTO Guilds (id, prefix, config) VALUES ($1, $2, $3);",
+            id,
+            prefix,
+            dumps(config),
         )
 
     async def update_guild_prefix(self, id: int, prefix: str):
@@ -51,7 +54,9 @@ class Database:
 
         if id in self.guilds:
             del self.guilds[id]
-        await self.execute("UPDATE Guilds SET config = $1 WHERE id = $2;", dumps(config), id)
+        await self.execute(
+            "UPDATE Guilds SET config = $1 WHERE id = $2;", dumps(config), id
+        )
 
     async def fetch_guild(self, id: int):
         if id in self.guilds:
@@ -62,10 +67,17 @@ class Database:
         return data
 
     async def create_user(self, id: int, guild_id: int, xp: int = 0):
-        await self.execute("INSERT INTO Users (id, guildid, xp) VALUES ($1, $2, $3);", id, guild_id, xp)
+        await self.execute(
+            "INSERT INTO Users (id, guildid, xp) VALUES ($1, $2, $3);", id, guild_id, xp
+        )
 
     async def add_xp(self, id: int, guild_id: int, xp: int = 0):
-        await self.execute("UPDATE Users SET xp = xp + $3 WHERE id = $1 AND guildid = $2;", id, guild_id, xp)
+        await self.execute(
+            "UPDATE Users SET xp = xp + $3 WHERE id = $1 AND guildid = $2;",
+            id,
+            guild_id,
+            xp,
+        )
         if id in self.users:
             del self.users[id]
 
@@ -74,15 +86,25 @@ class Database:
         if bucket in self.users:
             return self.users[bucket]
 
-        data = await self.fetchrow("SELECT * FROM Users WHERE id = $1 AND guildid = $2;", id, guild_id)
+        data = await self.fetchrow(
+            "SELECT * FROM Users WHERE id = $1 AND guildid = $2;", id, guild_id
+        )
         self.users[bucket] = data
         return data
 
     async def fetch_top_users(self, guild_id: int, count: int = 15):
-        return await self.fetch("SELECT * FROM Users WHERE guildid = $1 ORDER BY xp DESC LIMIT $2;", guild_id, count)
+        return await self.fetch(
+            "SELECT * FROM Users WHERE guildid = $1 ORDER BY xp DESC LIMIT $2;",
+            guild_id,
+            count,
+        )
 
     async def get_rank(self, id: int, guild_id: int):
-        return await self.fetchrow("SELECT rank FROM (SELECT id, RANK () OVER (ORDER BY xp) FROM Users WHERE guildid = $1) as ranks WHERE id = $2;", guild_id, id)
+        return await self.fetchrow(
+            "SELECT rank FROM (SELECT id, RANK () OVER (ORDER BY xp) FROM Users WHERE guildid = $1) as ranks WHERE id = $2;",
+            guild_id,
+            id,
+        )
 
     async def user_is_banned(self, id: int) -> bool:
         if id in self.banned:
@@ -101,4 +123,6 @@ class Database:
 
     async def add_users(self, users: list):
         async with self.pool.acquire() as conn:
-            await conn.executemany("INSERT INTO Users VALUES ($1, $2, $3, $4, $5);", users)
+            await conn.executemany(
+                "INSERT INTO Users VALUES ($1, $2, $3, $4, $5);", users
+            )

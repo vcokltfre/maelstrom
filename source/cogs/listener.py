@@ -7,7 +7,14 @@ from collections import defaultdict
 from json import loads
 
 from source import Bot
-from source.utils.defaults import INCREMENT, MODIFIERS, COOLDOWN, ALGORITHM, LEVELUP, ROLES
+from source.utils.defaults import (
+    INCREMENT,
+    MODIFIERS,
+    COOLDOWN,
+    ALGORITHM,
+    LEVELUP,
+    ROLES,
+)
 from helpers.algorithms import Linear, LinearIncremental, Quadratic
 
 algos = {
@@ -30,7 +37,7 @@ class Listener(commands.Cog):
 
     def debug(self, *args):
         """Debug print a line, only if debug mode is enabled."""
-        if self.debugging: # TODO: Use logging module debugs
+        if self.debugging:  # TODO: Use logging module debugs
             print(*args)
 
     def get_modifier(self, message: Message, modifiers: dict) -> Union[float, int]:
@@ -55,7 +62,9 @@ class Listener(commands.Cog):
         if message.channel.category:
             catmod = modifiers.get(message.channel.id)
             if catmod == 0:
-                self.debug("Category", message.category.id, "has modifier overriden to 0")
+                self.debug(
+                    "Category", message.category.id, "has modifier overriden to 0"
+                )
                 return 0
             elif catmod:
                 overall = catmod
@@ -113,9 +122,13 @@ class Listener(commands.Cog):
         try:
             method = config.get("method", "dm")
             if method == "dm":
-                await message.author.send(f"🎉 Congrats! You levelled up to level {level} in {message.guild}. You need {required} more xp to get to level {level + 1}! 🎉")
+                await message.author.send(
+                    f"🎉 Congrats! You levelled up to level {level} in {message.guild}. You need {required} more xp to get to level {level + 1}! 🎉"
+                )
             elif method == "chat":
-                await message.channel.send(f"🎉 Congrats {message.author.mention}! You levelled up to level {level}. You need {required} more xp to get to level {level + 1}! 🎉")
+                await message.channel.send(
+                    f"🎉 Congrats {message.author.mention}! You levelled up to level {level}. You need {required} more xp to get to level {level + 1}! 🎉"
+                )
             elif method == "react":
                 await message.add_reaction("🎉")
         except Exception as e:
@@ -138,7 +151,9 @@ class Listener(commands.Cog):
         if config[str(highest)] not in author_roles:
             if author_roles:
                 author_roles = [message.guild.get_role(role) for role in author_roles]
-                await message.author.remove_roles(*[role for role in author_roles if role])
+                await message.author.remove_roles(
+                    *[role for role in author_roles if role]
+                )
             await message.author.add_roles(message.guild.get_role(config[str(highest)]))
 
     @commands.Cog.listener()
@@ -173,12 +188,16 @@ class Listener(commands.Cog):
         try:
             if self.pattern.search(message.content):
                 await message.delete()
-                return await message.author.send(f"The prefix in **{message.guild}** is: `{guild['prefix']}`")
+                return await message.author.send(
+                    f"The prefix in **{message.guild}** is: `{guild['prefix']}`"
+                )
         except:
             self.debug("Received message but help isnt ready, ignoring error.")
 
         # Get the guild config
-        config = loads(guild["config"]) # TODO: Caching so that we don't load the config every time
+        config = loads(
+            guild["config"]
+        )  # TODO: Caching so that we don't load the config every time
         default = config.get("default", 100)
         levelinc = config.get("increment", INCREMENT)
         modifiers = config.get("modifiers", MODIFIERS)
@@ -195,7 +214,7 @@ class Listener(commands.Cog):
         self.debug("Overall modifier is", modifier)
 
         if modifier == 0:
-            return # No point doing calcs just to make it 0
+            return  # No point doing calcs just to make it 0
 
         # Check if the user is on cooldown, if yes return
         if self.cooldown(message, cooldown):

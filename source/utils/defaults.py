@@ -2,5 +2,5 @@ INCREMENT = 300
 MODIFIERS = {}
 COOLDOWN = 30
 ALGORITHM = "linear"
-LEVELUP = {"method":"react"}
+LEVELUP = {"method": "react"}
 ROLES = {}

@@ -43,8 +43,8 @@ class Quadratic(Algorithm):
 
     @staticmethod
     def get_level(xp: int, thr: int) -> tuple:
-        level = int((1 + sqrt(1 + 8* (xp / thr))) / 2)
+        level = int((1 + sqrt(1 + 8 * (xp / thr))) / 2)
 
-        x = ((level + 1)**2 * thr - (level + 1)*thr) * 0.5
+        x = ((level + 1) ** 2 * thr - (level + 1) * thr) * 0.5
 
         return level, int(x - xp)
