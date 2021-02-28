@@ -95,3 +95,10 @@ class Database:
                 return True
 
         return False
+
+    async def clear_guild(self, id: int):
+        await self.execute("DELETE FROM Users WHERE guildid = $1;", id)
+
+    async def add_users(self, users: list):
+        async with self.pool.acquire() as conn:
+            await conn.executemany("INSERT INTO Users VALUES ($1, $2, $3, $4, $5);", users)
