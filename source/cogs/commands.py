@@ -103,7 +103,21 @@ class Commands(commands.Cog):
     @config.command(name="reset")
     async def cfg_reset(self, ctx: Context):
         """Reset your Maelstrom config."""
-        pass  # TODO: Confgig reset command + checks
+        msg = await ctx.send(f"Are you sure you wish to reset your Maelstrom config? [Yes/No]")
+
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        try:
+            message = await self.bot.wait_for("message", check=check, timeout=30)
+        except:
+            return await msg.edit(content="Cancelled.")
+
+        if message.content.lower() not in ["yes", "y"]:
+            return await msg.edit(content="Cancelled.")
+
+        await self.bot.db.update_guild_config(ctx.guild.id, {})
+        await ctx.send("Your Maelstrom config has been successfully reset!")
 
     @config.group(name="increment", aliases=["inc"])
     async def cfg_inc(self, ctx: Context):
