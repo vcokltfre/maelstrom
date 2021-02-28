@@ -5,7 +5,7 @@ from typing import Union
 from source import Bot
 from source.utils.checks import not_banned
 from source.utils.context import Context
-from source.utils.defaults import INCREMENT, COOLDOWN, ALGORITHM, LEVELUP
+from source.utils.defaults import INCREMENT, COOLDOWN, ALGORITHM, LEVELUP, ROLES
 from helpers.algorithms import Linear, LinearIncremental, Quadratic
 
 algos = {
@@ -233,6 +233,8 @@ class Commands(commands.Cog):
     @cfg_cd.command(name="set")
     async def cfg_cd_set(self, ctx: Context, *, new: int):
         """Set a new cooldown."""
+        if not (10 <= new <= 3600):
+            return await ctx.send("Increments must be between 10s and 3,600s inclusive.")
         config = await ctx.guild_config()
         config["cooldown"] = new
         await self.bot.db.update_guild_config(ctx.guild.id, config)
@@ -312,6 +314,76 @@ class Commands(commands.Cog):
         config["levelup"] = LEVELUP
         await self.bot.db.update_guild_config(ctx.guild.id, config)
         await ctx.send(f"Successfully reset your levelup action to: {LEVELUP['method']}")
+
+    @config.group(name="roles")
+    async def cfg_lr(self, ctx: Context):
+        """Change the current level roles config."""
+        if not ctx.invoked_subcommand:
+            await ctx.send_help("config roles")
+
+    @cfg_lr.command(name="get")
+    async def cfg_lr_get(self, ctx: Context):
+        """Get the current level roles config."""
+        config = await ctx.guild_config()
+        config = config.get("roles", ROLES)
+
+        if not config:
+            return await ctx.send(f"No level roles have been set up yet, create one using `{ctx.prefix}config roles add <level> <role>`")
+
+        desc = ""
+        for level, role in config.items():
+            role = ctx.guild.get_role(role)
+            if not role:
+                continue
+            desc += f"\n{level}: {role.mention}"
+
+        embed = Embed(title="Level Roles", colour=0x87CEEB, description=desc)
+        await ctx.send(embed=embed)
+
+    @cfg_lr.command(name="add", aliases=["set"])
+    async def cfg_lr_add(self, ctx: Context, level: int, role: Role):
+        """Add a new level role."""
+        if not (1 <= level <= 10000):
+            return await ctx.send("Levels must be between 1 and 10,0000 inclusive.")
+
+        config = await ctx.guild_config()
+        roles = config.get("roles", ROLES)
+
+        if len(roles) >= 25:
+            return await ctx.send("For performance reasons, you can't have more than 25 level roles, please remove a level role before adding a new one.")
+
+        roles[str(level)] = role.id
+        config["roles"] = roles
+
+        await self.bot.db.update_guild_config(ctx.guild.id, config)
+        await ctx.send(f"Successfully added `{role.id}` as the level role for level {level}")
+
+    @cfg_lr.command(name="remove", aliases=["del"])
+    async def cfg_lr_remove(self, ctx: Context, lr: Union[Role, int]):
+        """Remove a level role."""
+        config = await ctx.guild_config()
+        roles = config.get("roles", ROLES)
+
+        if isinstance(lr, int):
+            lr = level = str(lr)
+            print(lr, roles)
+            if lr not in roles:
+                return await ctx.send("That is not a valid level nor role.")
+            role = ctx.guild.get_role(roles[lr])
+            del roles[lr]
+        else:
+            level = None
+            for k, v in roles.items():
+                if v == lr.id:
+                    level = k
+            if not level:
+                return await ctx.send("That is not a valid level nor role.")
+            del roles[level]
+
+        config["roles"] = roles
+
+        await self.bot.db.update_guild_config(ctx.guild.id, config)
+        await ctx.send(f"Successfully removed `{role.id if isinstance(role, Role) else None}` as the level role for level {level}")
 
 
 def setup(bot: Bot):

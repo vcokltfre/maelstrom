@@ -7,7 +7,7 @@ from collections import defaultdict
 from json import loads
 
 from source import Bot
-from source.utils.defaults import INCREMENT, MODIFIERS, COOLDOWN, ALGORITHM, LEVELUP
+from source.utils.defaults import INCREMENT, MODIFIERS, COOLDOWN, ALGORITHM, LEVELUP, ROLES
 from helpers.algorithms import Linear, LinearIncremental, Quadratic
 
 algos = {
@@ -121,6 +121,26 @@ class Listener(commands.Cog):
         except Exception as e:
             print(e)
 
+    async def check_roles(self, message: Message, config: dict, level: int):
+        """Apply the correct level roles to a user."""
+        if not config:
+            return
+        roles = [(int(k), v) for k, v in config.items()]
+        roles.sort()
+
+        vals = set(v for v in config.values())
+        author_roles = set(r.id for r in message.author.roles) & vals
+        highest = 0
+        for role in roles:
+            if role[0] > highest:
+                highest = role[0]
+
+        if config[str(highest)] not in author_roles:
+            if author_roles:
+                author_roles = [message.guild.get_role(role) for role in author_roles]
+                await message.author.remove_roles(*[role for role in author_roles if role])
+            await message.author.add_roles(message.guild.get_role(config[str(highest)]))
+
     @commands.Cog.listener()
     async def on_ready(self):
         self.pattern = compile(r"^<@!?" + str(self.bot.user.id) + r">$")
@@ -165,6 +185,7 @@ class Listener(commands.Cog):
         cooldown = config.get("cooldown", COOLDOWN)
         algorithm = algos[config.get("algorithm", ALGORITHM)]
         levelup_config = config.get("levelup", LEVELUP)
+        roles = config.get("roles", ROLES)
 
         # Get the XP modifier, highest role modifier is chosen from roles,
         # highest precendence modifier set overall is chosen,
@@ -194,8 +215,11 @@ class Listener(commands.Cog):
         if (not levelup) or not levelup_config:
             return
 
+        try:
+            await self.check_roles(message, roles, level)
+        except Exception as e:
+            print("Roles assignment failed", e)
         await self.level_up(message, levelup_config, level, required)
-
 
 
 def setup(bot: Bot):
