@@ -73,7 +73,7 @@ class Commands(commands.Cog):
         algorithm = algos[guild.get("algorithm", "linear")]
         inc = guild.get("increment", 300)
         xp = user["xp"]
-        dm_rank = guild.get("dm_rank", False)
+        dm_rank = guild.get("dm_rank", True)
 
         level, required = algorithm.get_level(xp, inc)
 
@@ -88,9 +88,9 @@ class Commands(commands.Cog):
         )
 
         if dm_rank:
-            await ctx.send(embed=embed)
-        else:
             await ctx.author.send(embed=embed)
+        else:
+            await ctx.send(embed=embed)
         
 
     @commands.group(name="config", aliases=["cfg"])
