@@ -114,7 +114,7 @@ class Listener(commands.Cog):
             if method == "dm":
                 await message.author.send(f"🎉 Congrats! You levelled up to level {level} in {message.guild}. You need {required} more xp to get to level {level + 1}! 🎉")
             elif method == "chat":
-                await message.channel.send(f"🎉 Confgrats {message.author.mention}! You levelled up to level {level}. You need {required} more xp to get to level {level + 1}! 🎉")
+                await message.channel.send(f"🎉 Congrats {message.author.mention}! You levelled up to level {level}. You need {required} more xp to get to level {level + 1}! 🎉")
             elif method == "react":
                 await message.add_reaction("🎉")
         except Exception as e:
