@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Intents, Message, AllowedMentions
+from discord import Intents, Message, AllowedMentions, Game
 from typing import Optional
 from traceback import print_exc
 
@@ -22,6 +22,7 @@ class Bot(commands.Bot):
             intents=intents,
             allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
             help_command=Help(),
+            activity=Game(name="ping for prefix")
             *args,
             **kwargs,
         )
