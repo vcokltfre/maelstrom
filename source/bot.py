@@ -22,7 +22,7 @@ class Bot(commands.Bot):
             intents=intents,
             allowed_mentions=AllowedMentions(everyone=False, users=False, roles=False),
             help_command=Help(),
-            activity=Game(name="ping for prefix")
+            activity=Game(name="ping for prefix"),
             *args,
             **kwargs,
         )
