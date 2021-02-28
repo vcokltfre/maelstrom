@@ -1,6 +1,8 @@
 from discord.ext import commands
-from discord import Embed, TextChannel, CategoryChannel, Role, Member
+from discord import Embed, TextChannel, CategoryChannel, Role, Member, File
 from typing import Union
+from io import BytesIO
+import matplotlib.pyplot as plt
 
 from source import Bot
 from source.utils.checks import not_banned
@@ -87,6 +89,32 @@ class Commands(commands.Cog):
         )
 
         await ctx.author.send(embed=embed)
+
+    @commands.group(name="breakdown", aliases=["lbd"])
+    @commands.check_any(
+        commands.has_guild_permissions(manage_guild=True), commands.is_owner()
+    )
+    @commands.guild_only()
+    @commands.cooldown(rate=1, per=2, type=commands.BucketType.member)
+    @not_banned()
+    async def level_breakdown(self, ctx: Context):
+        """Get a graphical breakdown of the current settings."""
+        config = await ctx.guild_config()
+        aname = config.get("algorithm", ALGORITHM)
+        algo = algos[aname]
+        inc = config.get("increment", INCREMENT)
+
+        level, xpt = [], []
+        for i in range(100):
+            xp = i * 1000
+            l, _ = algo.get_level(xp, inc)
+            level.append(l)
+            xpt.append(xp)
+
+        plt.plot(xpt, level)
+        plt.savefig("/tmp/lbd.png")
+        plt.cla()
+        await ctx.send(content=f"Breakdown for {ctx.guild} | {aname}", file=File("/tmp/lbd.png", "breakdown.png"))
 
     @commands.group(name="config", aliases=["cfg"])
     @commands.check_any(
