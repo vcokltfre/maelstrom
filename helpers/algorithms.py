@@ -7,7 +7,7 @@ class Algorithm:
 
     @classmethod
     def calc(cls, before: int, after: int, inc: int) -> Tuple[int, int, bool]:
-        """Returns the level, xp required to level up, whether the current levelup is a levelup."""
+        """Returns the level, xp required to level up, whether the current xp gain is a levelup."""
         bl, _ = cls.get_level(before, inc)
         al, nx = cls.get_level(after, inc)
 
