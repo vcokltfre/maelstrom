@@ -108,7 +108,7 @@ class Utility(commands.Cog):
         """Shows the github repo for this bot, include a command, cog, or extension to got to that file."""
         if source_item is None:
             embed = Embed(
-                title="Magoji's Github Repository",
+                title="Maelstrom's Github Repository",
                 description=f"[Here's the github link!](https://github.com/vcokltfre/maelstrom)",
                 colour=0x87CEEB,
             )
