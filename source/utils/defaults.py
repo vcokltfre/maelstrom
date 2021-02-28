@@ -4,3 +4,4 @@ COOLDOWN = 30
 ALGORITHM = "linear"
 LEVELUP = {"method": "react"}
 ROLES = {}
+DM_RANK = True
