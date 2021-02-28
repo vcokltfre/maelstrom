@@ -23,7 +23,7 @@ class Commands(commands.Cog):
 
     @commands.command(name="leaderboard", aliases=["lb", "top"])
     @commands.guild_only()
-    @commands.cooldown(rate=1, per=3, type=commands.BucketType.member)
+    @commands.cooldown(rate=1, per=30, type=commands.BucketType.member)
     @not_banned()
     async def leaderboard(self, ctx: Context):
         async with ctx.typing():
