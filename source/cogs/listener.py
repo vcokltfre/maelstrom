@@ -198,7 +198,7 @@ class Listener(commands.Cog):
         config = loads(
             guild["config"]
         )  # TODO: Caching so that we don't load the config every time
-        default = config.get("default", 100)
+        default = config.get("default", 30)
         levelinc = config.get("increment", INCREMENT)
         modifiers = config.get("modifiers", MODIFIERS)
         cooldown = config.get("cooldown", COOLDOWN)
