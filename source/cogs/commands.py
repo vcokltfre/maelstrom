@@ -56,8 +56,9 @@ class Commands(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(rate=1, per=10, type=commands.BucketType.member)
     @not_banned()
-    async def rank(self, ctx: Context):
-        user = await self.bot.db.fetch_user(ctx.author.id, ctx.guild.id)
+    async def rank(self, ctx: Context, member: Member = None):
+        to_check = member or ctx.author
+        user = await self.bot.db.fetch_user(to_check.id, ctx.guild.id)
 
         try:
             await ctx.message.delete()
@@ -65,9 +66,12 @@ class Commands(commands.Cog):
             pass
 
         if not user:
-            await ctx.author.send(
-                "There isn't any rank info on you yet, try talking some more!"
-            )
+            if to_check == ctx.author:
+                await ctx.author.send(
+                    "There isn't any rank info on you yet, try talking some more!"
+                )
+            else:
+                await ctx.author.send("There isn't any rank info on this user!")
 
         guild = await ctx.guild_config()
         algorithm = algos[guild.get("algorithm", "linear")]
@@ -77,14 +81,14 @@ class Commands(commands.Cog):
 
         level, required = algorithm.get_level(xp, inc)
 
-        rank = await self.bot.db.get_rank(ctx.author.id, ctx.guild.id)
+        rank = await self.bot.db.get_rank(to_check.id, ctx.guild.id)
 
         embed = Embed(
             description=f"Server Ranking: #{rank['rank']}\nServer Level: {level}\nServer XP: {xp} xp\nLevel-up: {required} xp",
             colour=0x87CEEB,
         )
         embed.set_author(
-            name=f"{ctx.author.name} | {ctx.guild}", icon_url=str(ctx.author.avatar_url)
+            name=f"Rank data for {to_check.name} | {ctx.guild}", icon_url=str(to_check.avatar_url)
         )
 
         if dm_rank:
