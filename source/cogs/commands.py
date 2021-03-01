@@ -113,7 +113,7 @@ class Commands(commands.Cog):
 
     @dm_rank.command(name="get")
     async def dm_rank_get(self, ctx: Context):
-        """Get the current value for the dm_rank option"""
+        """Get the current value for the dm_rank option."""
         config = await ctx.guild_config()
         val = config.get("dm_rank", DM_RANK)
         if val:
@@ -123,7 +123,7 @@ class Commands(commands.Cog):
     
     @dm_rank.command(name="set")
     async def dm_rank_set(self, ctx: Context, value: str):
-        """Set if you want !rank to dm the user or display in the guild chat"""
+        """Set if you want !rank to dm the user or display in the guild chat."""
         if not value.lower() in ['true', 'false']:
             return await ctx.send("Invalid Option! Valid Options: true, false")
         opt = value.lower()
@@ -133,7 +133,7 @@ class Commands(commands.Cog):
         else:
             config["dm_rank"] = False
         await self.bot.db.update_guild_config(ctx.guild.id, config)
-        await ctx.send(f"Successfully updated your config! (dm_rank was set to {value})")
+        await ctx.send(f"Successfully updated your dm rank config to: {value}")
                 
     @config.command(name="reset")
     async def cfg_reset(self, ctx: Context):
