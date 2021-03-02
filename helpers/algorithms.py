@@ -48,3 +48,11 @@ class Quadratic(Algorithm):
         x = ((level + 1) ** 2 * thr - (level + 1) * thr) * 0.5
 
         return level, int(x - xp)
+
+
+class Mee6(Algorithm):
+        """A copy of Mee6's algorithm"""
+
+    @staticmethod
+    def get_level(xp: int, inc: int) -> tuple:
+        level = 
