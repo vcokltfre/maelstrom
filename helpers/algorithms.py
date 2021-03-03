@@ -54,5 +54,8 @@ class Mee6(Algorithm):
         """A copy of Mee6's algorithm"""
 
     @staticmethod
-    def get_level(xp: int, inc: int) -> tuple:
-        level = 
+    def get_level(xp: int, thr: int) -> tuple:
+        level = int(5 * (n ** 2) + 50 * n + 100) 
+        # The equation is  5*(n**2)+50*n+100  idk Python I tried my best
+
+            return level, int(n)
