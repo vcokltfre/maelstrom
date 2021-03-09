@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from source import Bot
 from source.utils.checks import not_banned
 from source.utils.context import Context
-from source.utils.defaults import INCREMENT, COOLDOWN, ALGORITHM, LEVELUP, ROLES
+from source.utils.defaults import DM_RANK, INCREMENT, COOLDOWN, ALGORITHM, LEVELUP, ROLES
 from helpers.algorithms import Linear, LinearIncremental, Quadratic
 
 algos = {
@@ -75,6 +75,7 @@ class Commands(commands.Cog):
         algorithm = algos[guild.get("algorithm", "linear")]
         inc = guild.get("increment", 300)
         xp = user["xp"]
+        dm_rank = guild.get("dm_rank", True)
 
         level, required = algorithm.get_level(xp, inc)
 
@@ -88,7 +89,11 @@ class Commands(commands.Cog):
             name=f"{ctx.author.name} | {ctx.guild}", icon_url=str(ctx.author.avatar_url)
         )
 
-        await ctx.author.send(embed=embed)
+        if dm_rank:
+            await ctx.author.send(embed=embed)
+        else:
+            await ctx.send(embed=embed)
+        
 
     @commands.group(name="breakdown", aliases=["lbd"])
     @commands.check_any(
@@ -127,7 +132,37 @@ class Commands(commands.Cog):
         """Modify your Maelstrom config."""
         if not ctx.invoked_subcommand:
             await ctx.send_help("config")
+    
+    @config.group(name="dm_rank", aliases = ['rank', 'dm'])
+    async def dm_rank(self, ctx: Context):
+        """Change the config for the dm_rank option"""
+        if not ctx.invoked_subcommand:
+            await ctx.send_help("config dm_rank")
 
+    @dm_rank.command(name="get")
+    async def dm_rank_get(self, ctx: Context):
+        """Get the current value for the dm_rank option."""
+        config = await ctx.guild_config()
+        val = config.get("dm_rank", DM_RANK)
+        if val:
+            await ctx.send("Current config: Using the !rank command will dm the output to the user!")
+        else:
+            await ctx.send("Current config: Using the !rank command will output in the current text channel!")
+    
+    @dm_rank.command(name="set")
+    async def dm_rank_set(self, ctx: Context, value: str):
+        """Set if you want !rank to dm the user or display in the guild chat."""
+        if not value.lower() in ['true', 'false']:
+            return await ctx.send("Invalid Option! Valid Options: true, false")
+        opt = value.lower()
+        config = await ctx.guild_config()
+        if opt == 'true':
+            config["dm_rank"] = True
+        else:
+            config["dm_rank"] = False
+        await self.bot.db.update_guild_config(ctx.guild.id, config)
+        await ctx.send(f"Successfully updated your dm rank config to: {value}")
+                
     @config.command(name="reset")
     async def cfg_reset(self, ctx: Context):
         """Reset your Maelstrom config."""
