@@ -436,7 +436,7 @@ class Commands(commands.Cog):
     async def cfg_lr_add(self, ctx: Context, level: int, role: Role):
         """Add a new level role."""
         if not (1 <= level <= 10000):
-            return await ctx.send("Levels must be between 1 and 10,0000 inclusive.")
+            return await ctx.send("Levels must be between 1 and 10,000 inclusive.")
 
         config = await ctx.guild_config()
         roles = config.get("roles", ROLES)
