@@ -15,11 +15,10 @@ from source.utils.defaults import (
     LEVELUP,
     ROLES,
 )
-from helpers.algorithms import Linear, LinearIncremental, Quadratic
+from helpers.algorithms import Linear, Quadratic
 
 algos = {
     "linear": Linear,
-    "linearinc": LinearIncremental,
     "quadratic": Quadratic,
 }
 

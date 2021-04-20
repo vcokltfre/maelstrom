@@ -8,11 +8,10 @@ from source import Bot
 from source.utils.checks import not_banned
 from source.utils.context import Context
 from source.utils.defaults import DM_RANK, INCREMENT, COOLDOWN, ALGORITHM, LEVELUP, ROLES
-from helpers.algorithms import Linear, LinearIncremental, Quadratic
+from helpers.algorithms import Linear, Quadratic
 
 algos = {
     "linear": Linear,
-    "linearinc": LinearIncremental,
     "quadratic": Quadratic,
 }
 

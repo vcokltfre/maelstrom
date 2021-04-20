@@ -22,22 +22,6 @@ class Linear(Algorithm):
         return xp // inc, inc - (xp % inc)
 
 
-class LinearIncremental(Algorithm):
-    """A linearly incremental levelling algorithm."""
-
-    @staticmethod
-    def get_level(xp: int, inc: int) -> tuple:
-        level = 0
-        sub = inc
-
-        while xp > sub:
-            xp -= sub
-            sub += inc
-            level += 1
-
-        return level, abs(sub - xp)
-
-
 class Quadratic(Algorithm):
     """A ^0.5 based levelling algorithm."""
 
