@@ -105,7 +105,7 @@ class Database:
 
     async def get_rank(self, id: int, guild_id: int):
         return await self.fetchrow(
-            "SELECT rank FROM (SELECT id, RANK () OVER (ORDER BY xp) FROM Users WHERE guildid = $1) as ranks WHERE id = $2;",
+            "SELECT rank FROM (SELECT id, RANK () OVER (ORDER BY xp DESC) FROM Users WHERE guildid = $1) as ranks WHERE id = $2;",
             guild_id,
             id,
         )
