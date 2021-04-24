@@ -16,8 +16,11 @@ def not_banned():
 
     return check(predicate)
 
+
 def in_guild_or_dm(guild_id: int):
     async def predicate(ctx: Context):
-        if not ctx.guild: return True
+        if not ctx.guild:
+            return True
         return ctx.guild.id == guild_id
+
     return check(predicate)
