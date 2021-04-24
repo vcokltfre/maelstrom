@@ -86,6 +86,9 @@ class Utility(commands.Cog):
             data = await page.json()
             users = data["players"]
 
+            if len(users) == 0:
+                break
+
             for user in users:
                 user_count += 1
                 userdata[user["id"]] = (int(user["id"]), guild, user["xp"], 0, False)
