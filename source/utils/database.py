@@ -39,6 +39,8 @@ class Database:
             prefix,
             dumps(config),
         )
+        if id in self.guilds:
+            del self.guilds[id]
 
     async def update_guild_prefix(self, id: int, prefix: str):
         if not await self.fetch_guild(id):
@@ -70,6 +72,8 @@ class Database:
         await self.execute(
             "INSERT INTO Users (id, guildid, xp) VALUES ($1, $2, $3);", id, guild_id, xp
         )
+        if id in self.users:
+            del self.users[id]
 
     async def add_xp(self, id: int, guild_id: int, xp: int = 0):
         await self.execute(
