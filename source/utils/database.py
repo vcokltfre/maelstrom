@@ -85,9 +85,9 @@ class Database:
         if id in self.users:
             del self.users[id]
 
-    async def fetch_user(self, id: int, guild_id: int):
+    async def fetch_user(self, id: int, guild_id: int, usecache: bool = True):
         bucket = f"{id}/{guild_id}"
-        if bucket in self.users:
+        if bucket in self.users and usecache:
             return self.users[bucket]
 
         data = await self.fetchrow(

@@ -65,7 +65,7 @@ class Commands(commands.Cog):
     @commands.cooldown(rate=1, per=10, type=commands.BucketType.member)
     @not_banned()
     async def rank(self, ctx: Context):
-        user = await self.bot.db.fetch_user(ctx.author.id, ctx.guild.id)
+        user = await self.bot.db.fetch_user(ctx.author.id, ctx.guild.id, False)
 
         try:
             await ctx.message.delete()
