@@ -62,7 +62,7 @@ class Commands(commands.Cog):
 
             await ctx.send(embed=embed)
 
-    @commands.command(name="rank", aliases=["level"])
+    @commands.command(name="rank", aliases=["level", "levels"])
     @commands.guild_only()
     @commands.cooldown(rate=1, per=10, type=commands.BucketType.member)
     @not_banned()
