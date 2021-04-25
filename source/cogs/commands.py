@@ -35,12 +35,14 @@ class Commands(commands.Cog):
     @not_banned()
     async def leaderboard(self, ctx: Context):
         async with ctx.typing():
-            top = await self.bot.db.fetch_top_users(ctx.guild.id)
+            top = await self.bot.db.fetch_top_users(ctx.guild.id, 30)
             guild = await ctx.guild_config()
             algorithm = algos[guild.get("algorithm", "linear")]
             inc = guild.get("increment", 300)
 
             embed = Embed(title=f"Top Users in {ctx.guild}", colour=0x87CEEB)
+
+            top = [u for u in top if ctx.guild.get_member(u["id"])]
 
             for i, user in enumerate(top):
                 id = user["id"]
