@@ -44,7 +44,7 @@ class Commands(commands.Cog):
 
             top = [u for u in top if ctx.guild.get_member(u["id"])]
 
-            for i, user in enumerate(top):
+            for i, user in enumerate(top[:15]):
                 id = user["id"]
                 xp = user["xp"]
                 member = ctx.guild.get_member(id)
