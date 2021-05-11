@@ -7,8 +7,6 @@ class Database:
     """A database interface for the bot to connect to Postgres."""
 
     def __init__(self):
-        self.guilds = {}
-        self.users = {}
         self.banned = set()
 
     async def setup(self):
@@ -39,41 +37,29 @@ class Database:
             prefix,
             dumps(config),
         )
-        if id in self.guilds:
-            del self.guilds[id]
 
     async def update_guild_prefix(self, id: int, prefix: str):
         if not await self.fetch_guild(id):
             return await self.create_guild(id, prefix)
 
-        if id in self.guilds:
-            del self.guilds[id]
         await self.execute("UPDATE Guilds SET prefix = $1 WHERE id = $2;", prefix, id)
 
     async def update_guild_config(self, id: int, config: dict):
         if not await self.fetch_guild(id):
             await self.create_guild(id)
 
-        if id in self.guilds:
-            del self.guilds[id]
         await self.execute(
             "UPDATE Guilds SET config = $1 WHERE id = $2;", dumps(config), id
         )
 
     async def fetch_guild(self, id: int):
-        if id in self.guilds:
-            return self.guilds[id]
 
-        data = await self.fetchrow("SELECT * FROM Guilds WHERE id = $1;", id)
-        self.guilds[id] = data
-        return data
+        return await self.fetchrow("SELECT * FROM Guilds WHERE id = $1;", id)
 
     async def create_user(self, id: int, guild_id: int, xp: int = 0):
         await self.execute(
             "INSERT INTO Users (id, guildid, xp) VALUES ($1, $2, $3);", id, guild_id, xp
         )
-        if id in self.users:
-            del self.users[id]
 
     async def add_xp(self, id: int, guild_id: int, xp: int = 0):
         await self.execute(
@@ -82,19 +68,11 @@ class Database:
             guild_id,
             xp,
         )
-        if id in self.users:
-            del self.users[id]
 
     async def fetch_user(self, id: int, guild_id: int, usecache: bool = True):
-        bucket = f"{id}/{guild_id}"
-        if bucket in self.users and usecache:
-            return self.users[bucket]
-
-        data = await self.fetchrow(
+        return await self.fetchrow(
             "SELECT * FROM Users WHERE id = $1 AND guildid = $2;", id, guild_id
         )
-        self.users[bucket] = data
-        return data
 
     async def fetch_top_users(self, guild_id: int, count: int = 15):
         return await self.fetch(
