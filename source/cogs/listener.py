@@ -138,18 +138,19 @@ class Listener(commands.Cog):
         roles = [(int(k), v) for k, v in config.items()]  # [(level, role)]
         roles.sort(reverse=True)
 
+        add = []
+        valid = []
+
         for role in roles:
             if role[0] <= level:
-                break
+                if role[1] not in current:
+                    add.append(role[1])
+                valid.append(role[1])
 
-        add = None
         remove = []
 
-        if role[1] not in current:
-            add = role[1]
-
         for cr in current:
-            if cr != role[1] and cr in config.values():
+            if cr != role[1] and cr in config.values() and cr not in valid:
                 remove.append(cr)
 
         return {
@@ -165,7 +166,8 @@ class Listener(commands.Cog):
         results = self.get_roles(config, [r.id for r in message.author.roles], level)
 
         if add := results["add"]:
-            await message.author.add_roles(Object(id=add))
+            for role in add:
+                await message.author.add_roles(Object(id=add))
 
         if remove := results["remove"]:
             for role in remove:
