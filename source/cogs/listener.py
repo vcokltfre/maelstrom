@@ -167,7 +167,7 @@ class Listener(commands.Cog):
 
         if add := results["add"]:
             for role in add:
-                await message.author.add_roles(Object(id=add))
+                await message.author.add_roles(Object(id=role))
 
         if remove := results["remove"]:
             for role in remove:
