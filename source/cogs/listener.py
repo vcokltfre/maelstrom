@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Message
+from discord import Message, Object
 from re import compile
 from typing import Union
 from time import time
@@ -133,27 +133,43 @@ class Listener(commands.Cog):
         except Exception as e:
             print(e)
 
+    @staticmethod
+    def get_roles(config: dict, current: list, level: int) -> dict:
+        roles = [(int(k), v) for k, v in config.items()]  # [(level, role)]
+        roles.sort(reverse=True)
+
+        for role in roles:
+            if role[0] <= level:
+                break
+
+        add = None
+        remove = []
+
+        if role[1] not in current:
+            add = role[1]
+
+        for cr in current:
+            if cr != role[1] and cr in config.values():
+                remove.append(cr)
+
+        return {
+            "add": add,
+            "remove": remove,
+        }
+
     async def check_roles(self, message: Message, config: dict, level: int):
         """Apply the correct level roles to a user."""
         if not config:
             return
-        roles = [(int(k), v) for k, v in config.items()]
-        roles.sort()
 
-        vals = set(v for v in config.values())
-        author_roles = set(r.id for r in message.author.roles) & vals
-        highest = 0
-        for role in roles:
-            if role[0] > highest:
-                highest = role[0]
+        results = self.get_roles(config, [r.id for r in message.author.roles], level)
 
-        if config[str(highest)] not in author_roles:
-            if author_roles:
-                author_roles = [message.guild.get_role(role) for role in author_roles]
-                await message.author.remove_roles(
-                    *[role for role in author_roles if role]
-                )
-            await message.author.add_roles(message.guild.get_role(config[str(highest)]))
+        if add := results["add"]:
+            await message.author.add_roles(Object(id=add))
+
+        if remove := results["remove"]:
+            for role in remove:
+                await message.author.remove_roles(Object(id=role))
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -229,14 +245,15 @@ class Listener(commands.Cog):
 
         level, required, levelup = algorithm.calc(current_xp, new, levelinc)
 
-        self.debug("Operation completed in", time() - start)
-        if (not levelup) or not levelup_config:
-            return
-
         try:
             await self.check_roles(message, roles, level)
         except Exception as e:
             print("Roles assignment failed", e)
+
+        self.debug("Operation completed in", time() - start)
+        if (not levelup) or not levelup_config:
+            return
+
         await self.level_up(message, levelup_config, level, required)
 
 
